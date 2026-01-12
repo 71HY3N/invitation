@@ -8,9 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Babel Standalone để chạy React/TypeScript trực tiếp -->
+    <!-- Babel Standalone để biên dịch JSX/TypeScript ngay trong trình duyệt -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <!-- Import Map để React và Lucide hoạt động mượt mà -->
     <script type="importmap">
 {
   "imports": {
@@ -30,19 +31,33 @@
             margin: 0;
             padding: 0;
             background-color: #fffaf5;
-            overflow: hidden; /* Ngăn cuộn trang body để thiệp đẹp hơn trên mobile */
+            overflow: hidden;
+            touch-action: manipulation;
         }
         #root {
             width: 100vw;
             height: 100vh;
         }
-        .perspective-1000 {
-            perspective: 1000px;
+        /* Hiệu ứng mờ nền */
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        /* Tùy chỉnh thanh cuộn cho mobile */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fb923c;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
+
+    <!-- Nạp file code chính -->
     <script type="text/babel" data-presets="react,typescript" src="./index.tsx"></script>
 </body>
 </html>
