@@ -7,7 +7,7 @@ import {
   GraduationCap, Sparkles, Heart
 } from 'lucide-react';
 
-// --- THÔNG TIN CỦA BẠN ---
+// --- THÔNG TIN ---
 const MY_NAME = "Khánh Huyền";
 const ZALO_PHONE = "0814241333";
 const HELP_PHONE = "0332409003";
@@ -16,9 +16,9 @@ const TIME = "09:30 AM";
 const LOCATION_NAME = "Khu E - HUTECH";
 const LOCATION_SUB = "Thành phố Hồ Chí Minh";
 
-// --- LINK HÌNH ẢNH & NHẠC ---
+// --- LINKS ---
 const ZALO_LINK = `https://zalo.me/${ZALO_PHONE}`;
-const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/xxx"; // Hãy dán link Google Maps thật vào đây
+const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/xxx"; 
 const MUSIC_URL = "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3";
 const COVER_IMAGE = "https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/696320174827511fe39dc0cf/download/image.png"; 
 const MAP_IMAGE = "https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png";
@@ -56,7 +56,6 @@ const App = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Lấy tên từ URL nếu có: ?name=Tên_Khách
     const params = new URLSearchParams(window.location.search);
     const name = params.get('name');
     if (name) setGuestName(name.replace(/_/g, ' '));
@@ -80,7 +79,7 @@ const App = () => {
   };
 
   return (
-    <div className="relative h-screen w-full flex items-center justify-center p-4 bg-[#fffaf5] select-none">
+    <div className="relative h-screen w-full flex items-center justify-center p-4 bg-[#fffaf5] select-none overflow-hidden">
       <DecorativeIcons />
       <audio ref={audioRef} src={MUSIC_URL} loop />
 
@@ -97,15 +96,14 @@ const App = () => {
       {/* Modal Ảnh Bản Đồ */}
       {isMapOpen && (
         <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4" onClick={() => setIsMapOpen(false)}>
-          <img src={MAP_IMAGE} className="max-w-full max-h-[80vh] rounded-xl shadow-2xl" alt="Map" />
-          <button className="mt-8 px-6 py-3 bg-white/10 text-white rounded-full flex items-center gap-2 font-bold hover:bg-white/20">
+          <img src={MAP_IMAGE} className="max-w-full max-h-[80vh] rounded-xl shadow-2xl border-2 border-white/20" alt="Map" />
+          <button className="mt-8 px-6 py-3 bg-white/10 text-white rounded-full flex items-center gap-2 font-bold">
             <X size={20} /> Đóng bản đồ
           </button>
         </div>
       )}
 
       <div className="relative w-full max-w-[360px] h-[640px]">
-        
         {/* MÀN HÌNH BÌA */}
         <div className={`absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white transition-all duration-1000 ease-in-out z-20 ${isOpen ? 'opacity-0 -translate-y-full scale-90 pointer-events-none' : 'opacity-100'}`}>
           <div className="h-1/2 relative">
@@ -138,7 +136,6 @@ const App = () => {
 
         {/* MÀN HÌNH NỘI DUNG */}
         <div className={`absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white transition-all duration-700 z-10 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-          {/* Header nội dung */}
           <div className="bg-gradient-to-br from-orange-500 to-orange-700 p-8 pt-10 pb-16 text-center text-white relative shrink-0">
             <button onClick={() => setIsOpen(false)} className="absolute top-6 left-6 p-2 bg-white/20 rounded-xl">
               <ArrowLeft size={18} />
@@ -146,7 +143,6 @@ const App = () => {
             <h3 className="text-2xl font-black uppercase tracking-widest">{MY_NAME}</h3>
             <p className="text-[9px] uppercase tracking-widest opacity-70 mt-1">HUTECH Graduation Ceremony</p>
 
-            {/* Khối Thời Gian */}
             <div className="absolute -bottom-10 left-6 right-6 bg-white rounded-3xl p-4 shadow-xl flex items-center justify-around text-gray-800 border border-orange-50">
               <div className="text-center w-1/2 border-r border-gray-100">
                 <p className="text-[9px] font-black text-orange-500 uppercase mb-1">Ngày</p>
@@ -159,9 +155,7 @@ const App = () => {
             </div>
           </div>
 
-          {/* Thân nội dung */}
           <div className="flex-1 pt-14 px-6 pb-6 overflow-y-auto">
-            {/* Địa điểm */}
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl mb-4 border border-gray-100">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-orange-100 text-orange-600 rounded-xl"><MapPin size={20} /></div>
@@ -175,7 +169,6 @@ const App = () => {
               </a>
             </div>
 
-            {/* Xem trước bản đồ */}
             <div 
               onClick={() => setIsMapOpen(true)}
               className="relative h-40 w-full bg-gray-100 rounded-2xl overflow-hidden mb-6 cursor-pointer border-2 border-orange-50 group"
@@ -186,18 +179,11 @@ const App = () => {
               </div>
             </div>
 
-            {/* Các nút liên hệ */}
             <div className="space-y-3">
-              <a 
-                href={ZALO_LINK} target="_blank"
-                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
-              >
+              <a href={ZALO_LINK} target="_blank" className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
                 <MessageCircle size={18} /> Xác Nhận Tham Gia
               </a>
-              <a 
-                href={`tel:${HELP_PHONE}`}
-                className="w-full p-2 bg-white border border-gray-100 rounded-2xl flex items-center gap-3 shadow-sm hover:border-emerald-200 transition-all"
-              >
+              <a href={`tel:${HELP_PHONE}`} className="w-full p-2 bg-white border border-gray-100 rounded-2xl flex items-center gap-3 shadow-sm hover:border-emerald-200 transition-all">
                 <div className="bg-emerald-100 text-emerald-600 p-3 rounded-xl"><Phone size={18} fill="currentColor" /></div>
                 <div className="text-left">
                   <p className="text-[9px] font-black text-gray-400 uppercase leading-none">Cần hỗ trợ? Gọi Hiệp</p>

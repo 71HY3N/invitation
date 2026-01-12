@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lời Mời Tốt Nghiệp - Khánh Huyền</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Babel Standalone để biên dịch JSX/TypeScript ngay trong trình duyệt -->
+    <!-- CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Babel Standalone: Chuyển đổi JSX/TS ngay tại trình duyệt -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Import Map để React và Lucide hoạt động mượt mà -->
+    <!-- Import Map: Định nghĩa các thư viện từ CDN -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
     "lucide-react": "https://esm.sh/lucide-react@0.474.0?external=react",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
@@ -37,27 +39,28 @@
         #root {
             width: 100vw;
             height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        /* Hiệu ứng mờ nền */
-        .glass {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        /* Hiệu ứng loading đơn giản khi chưa nạp xong script */
+        #root:empty::before {
+            content: "Đang nạp thiệp... ♥";
+            font-weight: bold;
+            color: #f97316;
+            animation: pulse 1.5s infinite;
         }
-        /* Tùy chỉnh thanh cuộn cho mobile */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #fb923c;
-            border-radius: 10px;
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Nạp file code chính -->
-    <script type="text/babel" data-presets="react,typescript" src="./index.tsx"></script>
+    <!-- Nạp index.tsx với cấu hình module cho Babel -->
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="./index.tsx"></script>
 </body>
 </html>
