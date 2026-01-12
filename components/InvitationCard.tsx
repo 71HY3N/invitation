@@ -12,7 +12,6 @@ const SUPPORT_PHONE = "0332409003";
 const ZALO_LINK = `https://zalo.me/${CONFIRM_ZALO_PHONE}`;
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/xxx";
 
-// Nhạc "Cute Kawaii" cực kỳ nhí nhảnh, vui nhộn
 const DEFAULT_AUDIO = "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3";
 
 const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) => {
@@ -35,7 +34,6 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
     }
   }, []);
 
-  // Ưu tiên hiển thị tên khách mời cụ thể từ URL
   const finalGuestName = guestName || "Mọi người";
 
   const handleOpen = () => {
@@ -60,7 +58,6 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
 
   const handleConfirm = () => {
     window.open(ZALO_LINK, '_blank');
-    alert(`Cảm ơn ${finalGuestName}! Nhắn tin xác nhận cho em qua Zalo nhé!`);
   };
 
   const graduateImage = "https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/696320174827511fe39dc0cf/download/image.png"; 
@@ -71,7 +68,6 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
       <DecorativeBackground />
       {!isMusicDisabled && <audio key={audioSrc} ref={audioRef} src={audioSrc} loop />}
 
-      {/* Admin Button */}
       <button 
         onClick={onOpenAdmin}
         className="fixed bottom-4 left-4 z-50 p-2 text-orange-400/30 hover:text-orange-500 transition-all hover:opacity-100 flex items-center gap-1 text-[10px] font-black uppercase tracking-tighter"
@@ -79,15 +75,14 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
         <UserPlus size={14} /> Admin
       </button>
 
-      {/* Map Modal */}
       {isMapZoomed && (
         <div 
           className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300"
           onClick={() => setIsMapZoomed(false)}
         >
           <div className="relative w-full max-w-5xl h-[80vh] flex flex-col items-center">
-             <div className="w-full text-center mb-4">
-                <h3 className="text-white text-xl font-black uppercase tracking-widest">Sơ Đồ Lối Vào</h3>
+             <div className="w-full text-center mb-4 text-white">
+                <h3 className="text-xl font-black uppercase tracking-widest">Sơ Đồ Lối Vào</h3>
                 <p className="text-orange-400 text-xs font-bold">Khu E - HUTECH University</p>
              </div>
              <img src={mapImage} alt="Map Zoomed" className="flex-1 object-contain rounded-2xl shadow-2xl border-2 border-white/20"/>
@@ -98,7 +93,6 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
         </div>
       )}
 
-      {/* Music Toggle */}
       {isOpen && !isMusicDisabled && (
         <button 
           onClick={toggleMusic} 
@@ -108,7 +102,6 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
         </button>
       )}
 
-      {/* Card Wrapper */}
       <div className="relative w-full max-w-sm h-[740px] perspective-1000 z-10">
         
         {/* FRONT */}
@@ -119,19 +112,19 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
             <div className="absolute bottom-0 left-0 right-0 p-8 text-center text-white">
                <div className="inline-flex items-center gap-2 border-2 border-orange-300/40 px-5 py-2 rounded-full mb-3 backdrop-blur-md bg-white/10 shadow-lg">
                  <PawPrint size={14} className="text-yellow-400 fill-yellow-400" />
-                 <span className="text-[10px] tracking-[0.3em] font-black uppercase text-white">Graduation Party</span>
+                 <span className="text-[10px] tracking-[0.3em] font-black uppercase text-white">Graduation Invite</span>
                </div>
-               <h1 className="text-3xl font-black uppercase tracking-tight text-white mb-1 drop-shadow-2xl leading-none">Lễ Tốt Nghiệp Của</h1>
-               <p className="text-2xl tracking-[0.05em] text-orange-300 uppercase font-black opacity-95">Nguyễn Khánh Huyền</p>
+               <h1 className="text-xl font-black uppercase tracking-tight text-white mb-1 drop-shadow-2xl leading-none whitespace-nowrap">Lễ Tốt Nghiệp Của</h1>
+               <p className="text-3xl tracking-[0.05em] text-orange-300 uppercase font-black opacity-95">Khánh Huyền</p>
             </div>
           </div>
 
-          <div className="flex-1 bg-white flex flex-col items-center pt-10 px-8 pb-8 text-center relative">
+          <div className="flex-1 bg-white flex flex-col items-center pt-12 px-8 pb-8 text-center relative">
              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gradient-to-br from-orange-400 to-orange-600 p-5 rounded-3xl shadow-2xl border-[6px] border-white">
                 <Music size={28} className="text-white animate-pulse" />
              </div>
 
-             <div className="space-y-1 mb-6 mt-4">
+             <div className="space-y-1 mb-6 mt-2">
                <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.3em]">Trân trọng kính mời</p>
                <h3 className="text-4xl font-black text-gray-900 leading-tight py-2 border-b-2 border-orange-50 italic">
                  {finalGuestName}
@@ -164,7 +157,7 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
                 <ArrowLeft size={20} strokeWidth={3} />
               </button>
               <div className="text-center mt-4">
-                <h2 className="text-2xl font-black uppercase tracking-widest text-white">Nguyễn Khánh Huyền</h2>
+                <h2 className="text-2xl font-black uppercase tracking-widest text-white">Khánh Huyền</h2>
                 <div className="flex items-center justify-center gap-2 mt-2 opacity-90">
                   <div className="h-[1px] w-4 bg-orange-200"></div>
                   <p className="text-[10px] uppercase tracking-[0.3em] font-black">HUTECH UNIVERSITY</p>
@@ -173,15 +166,15 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
               </div>
               
               <div className="absolute -bottom-10 left-6 right-6 bg-white text-gray-900 p-5 rounded-[32px] shadow-2xl flex items-center justify-around border border-gray-100">
-                  <div className="flex flex-col items-center w-1/2 border-r-2 border-gray-100">
-                    <div className="flex items-center gap-2 text-orange-600 font-black mb-1">
+                  <div className="flex flex-col items-center w-1/2 border-r-2 border-gray-100 text-center">
+                    <div className="flex items-center justify-center gap-2 text-orange-600 font-black mb-1">
                       <Calendar size={18} />
                       <span className="text-[10px] uppercase tracking-widest">Ngày</span>
                     </div>
                     <span className="font-black text-lg">17 / 01 / 26</span>
                   </div>
-                  <div className="flex flex-col items-center w-1/2">
-                    <div className="flex items-center gap-2 text-orange-600 font-black mb-1">
+                  <div className="flex flex-col items-center w-1/2 text-center">
+                    <div className="flex items-center justify-center gap-2 text-orange-600 font-black mb-1">
                       <Clock size={18} />
                       <span className="text-[10px] uppercase tracking-widest">Giờ</span>
                     </div>
@@ -230,7 +223,7 @@ const InvitationCard: React.FC<InvitationProps> = ({ guestName, onOpenAdmin }) =
                        <div className="bg-emerald-100 p-3 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                          <Phone size={20} fill="currentColor" />
                        </div>
-                       <div className="flex flex-col items-start leading-none">
+                       <div className="flex flex-col items-start leading-none text-left">
                          <span className="text-[10px] uppercase font-black tracking-widest text-gray-400">Hỗ trợ đường đi</span>
                          <span className="font-black text-md text-gray-800 tabular-nums">Gọi Hiệp: 0332 409 003</span>
                        </div>
