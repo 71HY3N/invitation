@@ -49,12 +49,13 @@
             z-index: 0;
             pointer-events: none;
             animation: fall linear forwards;
+            color: #fb923c; /* orange-400 */
         }
         @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.2; }
-            90% { opacity: 0.2; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
         /* Trang trí nổi hạt gạo/tim nhẹ */
@@ -150,8 +151,8 @@
         <!-- MẶT SAU (CHI TIẾT) -->
         <div id="back-side" class="absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white z-10">
             
-            <!-- Nút quay lại -->
-            <button onclick="closeInvitation()" class="absolute top-6 left-6 z-30 p-2 bg-white/20 text-white rounded-xl active:scale-90 transition-all border border-white/30 backdrop-blur-sm">
+            <!-- Nút quay lại - Làm rõ ràng hơn -->
+            <button onclick="closeInvitation()" class="absolute top-6 left-6 z-30 p-3 bg-orange-500/80 text-white rounded-2xl active:scale-90 transition-all shadow-lg border border-orange-400 backdrop-blur-md">
                 <i data-lucide="arrow-left" size="20"></i>
             </button>
 
@@ -201,9 +202,9 @@
         </div>
     </div>
 
-    <!-- Nút mở Admin Panel ẩn (Icon bàn tay mèo nhỏ ở góc trái) -->
-    <button onclick="toggleAdmin(true)" class="fixed bottom-6 left-6 z-50 p-3 text-gray-200 opacity-20 hover:opacity-100 transition-opacity active:scale-95">
-        <i data-lucide="paw-print" size="16"></i>
+    <!-- Nút mở Admin Panel ẩn (Icon hình khóa bí mật ở góc trái) -->
+    <button onclick="toggleAdmin(true)" class="fixed bottom-6 left-6 z-50 p-4 text-gray-400 opacity-5 hover:opacity-40 transition-opacity active:scale-95">
+        <i data-lucide="lock" size="14"></i>
     </button>
 
     <script>
@@ -224,25 +225,25 @@
             document.getElementById('guest-name').innerText = nameParam.replace(/_/g, ' ');
         }
 
-        // Tạo hiệu ứng bàn tay mèo rơi
+        // Tạo hiệu ứng bàn chân mèo rơi (Sử dụng SVG trực tiếp để hiệu năng tốt hơn)
+        const pawSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M11 15.5c.5 0 1 .5 1 1.5s-.5 2-1 2-1-.5-1-1.5.5-1.5 1-1.5z"/><path d="M13 15.5c.5 0 1 .5 1 1.5s-.5 2-1 2-1-.5-1-1.5.5-1.5 1-1.5z"/><path d="M12 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M17 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M7 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M12 21c-3.3 0-6-2.7-6-6 0-1.7.7-3.2 1.8-4.2C8.9 9.9 10.4 9 12 9s3.1.9 4.2 1.8c1.1 1 1.8 2.5 1.8 4.2 0 3.3-2.7 6-6 6z"/></svg>`;
+
         function createFallingPaw() {
             const paw = document.createElement('div');
             paw.className = 'falling-paw';
             
             // Random vị trí và kích thước
-            const size = 15 + Math.random() * 20;
+            const size = 20 + Math.random() * 25;
             paw.style.left = Math.random() * 100 + 'vw';
             paw.style.width = size + 'px';
             paw.style.height = size + 'px';
             
             // Random thời gian rơi
-            const duration = 5 + Math.random() * 5;
+            const duration = 6 + Math.random() * 6;
             paw.style.animationDuration = duration + 's';
             
-            paw.innerHTML = `<i data-lucide="paw-print" style="width: 100%; height: 100%"></i>`;
+            paw.innerHTML = pawSVG;
             fallingContainer.appendChild(paw);
-            
-            lucide.createIcons({ attrs: { class: ['falling-paw-icon'] } });
             
             // Tự xóa sau khi rơi xong
             setTimeout(() => {
@@ -251,18 +252,18 @@
         }
 
         // Bắt đầu rơi bàn tay mèo
-        setInterval(createFallingPaw, 1500);
+        setInterval(createFallingPaw, 1800);
 
         // Tạo icon trang trí nền tĩnh/bay nhẹ
         const decorContainer = document.getElementById('decorations');
         const icons = ['heart', 'sparkles', 'graduation-cap'];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 12; i++) {
             const div = document.createElement('div');
             div.className = 'floating-icon';
             div.style.left = Math.random() * 100 + 'vw';
             div.style.top = Math.random() * 100 + 'vh';
             div.style.animationDelay = Math.random() * 5 + 's';
-            div.innerHTML = `<i data-lucide="${icons[i % icons.length]}" style="width: ${20 + Math.random() * 20}px"></i>`;
+            div.innerHTML = `<i data-lucide="${icons[i % icons.length]}" style="width: ${18 + Math.random() * 20}px"></i>`;
             decorContainer.appendChild(div);
         }
         lucide.createIcons();
