@@ -30,30 +30,19 @@
             margin: 0;
             padding: 0;
             background-color: #fffaf5;
-            overflow-x: hidden;
+            overflow: hidden; /* Ngăn cuộn trang body để thiệp đẹp hơn trên mobile */
         }
-        /* Màn hình chờ cực ngắn */
-        #root:empty::before {
-            content: "♥";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            color: #f97316;
-            animation: pulse 1s infinite;
+        #root {
+            width: 100vw;
+            height: 100vh;
         }
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        .perspective-1000 {
+            perspective: 1000px;
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
-    <!-- Nạp trực tiếp file index.tsx. Babel sẽ xử lý toàn bộ code bên trong -->
     <script type="text/babel" data-presets="react,typescript" src="./index.tsx"></script>
 </body>
 </html>
