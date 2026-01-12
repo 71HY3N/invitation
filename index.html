@@ -3,12 +3,12 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lời Mời Tốt Nghiệp - Khánh Huyền</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Nạp Babel Standalone -->
+    <!-- Babel Standalone để chạy React/TypeScript trực tiếp -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="importmap">
@@ -29,54 +29,31 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
             background-color: #fffaf5;
+            overflow-x: hidden;
         }
-        .perspective-1000 {
-            perspective: 1000px;
-        }
-        /* Hiệu ứng loading */
+        /* Màn hình chờ cực ngắn */
         #root:empty::before {
-            content: "Đang nạp thiệp mời...";
+            content: "♥";
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-weight: 800;
+            font-size: 2rem;
             color: #f97316;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-size: 12px;
-            text-align: center;
-            width: 100%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- 
-      Sử dụng src trực tiếp với type="text/babel" 
-      Babel Standalone sẽ tự fetch file này qua XHR (bỏ qua lỗi MIME type text/plain)
-      data-presets="typescript,react" là bắt buộc để dịch code của bạn.
-    -->
-    <script 
-        type="text/babel" 
-        data-presets="typescript,react" 
-        data-type="module" 
-        src="./index.tsx">
-    </script>
-
-    <script>
-        // Hiển thị lỗi ra màn hình nếu có để dễ debug
-        window.onerror = function(message, source, lineno, colno, error) {
-            const root = document.getElementById('root');
-            if (root && root.innerHTML === "") {
-                root.innerHTML = `<div style="padding: 20px; color: red; font-size: 12px; font-family: monospace;">
-                    Lỗi khởi tạo: ${message}<br>Tại: ${source}:${lineno}
-                </div>`;
-            }
-        };
-    </script>
+    <!-- Nạp trực tiếp file index.tsx. Babel sẽ xử lý toàn bộ code bên trong -->
+    <script type="text/babel" data-presets="react,typescript" src="./index.tsx"></script>
 </body>
 </html>
