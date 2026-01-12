@@ -6,26 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lời Mời Tốt Nghiệp - Khánh Huyền</title>
     
-    <!-- CSS & Fonts -->
+    <!-- Thư viện hỗ trợ: Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- Babel Standalone: Chuyển đổi JSX/TS ngay tại trình duyệt -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Import Map: Định nghĩa các thư viện từ CDN -->
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.474.0?external=react",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body {
@@ -36,31 +20,198 @@
             overflow: hidden;
             touch-action: manipulation;
         }
-        #root {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .card-container {
+            perspective: 1000px;
         }
-        /* Hiệu ứng loading đơn giản khi chưa nạp xong script */
-        #root:empty::before {
-            content: "Đang nạp thiệp... ♥";
-            font-weight: bold;
-            color: #f97316;
-            animation: pulse 1.5s infinite;
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
         }
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+        /* Hiệu ứng mượt mà khi mở thiệp */
+        #front-side {
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #back-side {
+            transition: all 0.7s ease-out;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        .is-open #front-side {
+            transform: translateY(-100%) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .is-open #back-side {
+            transform: scale(1);
+            opacity: 1;
+        }
+        /* Icon bay bay nền */
+        .floating-icon {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+            animation: float 6s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
         }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="flex items-center justify-center h-screen w-screen overflow-hidden relative">
 
-    <!-- Nạp index.tsx với cấu hình module cho Babel -->
-    <script type="text/babel" data-presets="react,typescript" data-type="module" src="./index.tsx"></script>
+    <!-- Audio ngầm -->
+    <audio id="bg-music" src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" loop></audio>
+
+    <!-- Trang trí nền -->
+    <div id="decorations"></div>
+
+    <!-- Nút Nhạc -->
+    <button id="music-toggle" class="fixed top-6 right-6 z-50 p-3 bg-white shadow-xl rounded-2xl text-orange-500 hidden active:scale-90 transition-all">
+        <i data-lucide="volume-2" id="icon-playing"></i>
+        <i data-lucide="volume-x" id="icon-muted" class="hidden"></i>
+    </button>
+
+    <!-- Modal Bản Đồ -->
+    <div id="map-modal" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-6 hidden">
+        <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png" class="max-w-full max-h-[70vh] rounded-2xl shadow-2xl border-2 border-white/20">
+        <button onclick="toggleMap(false)" class="mt-8 px-6 py-3 bg-white/10 text-white rounded-full flex items-center gap-2 font-bold">
+            <i data-lucide="x"></i> Đóng bản đồ
+        </button>
+    </div>
+
+    <!-- Khung Thiệp -->
+    <div id="card-wrapper" class="relative w-full max-w-[360px] h-[640px] z-10">
+        
+        <!-- MẶT TRƯỚC (BÌA) -->
+        <div id="front-side" class="absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white z-20">
+            <div class="h-1/2 relative">
+                <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/696320174827511fe39dc0cf/download/image.png" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div class="absolute bottom-6 w-full text-center text-white px-4">
+                    <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Lễ Tốt Nghiệp Của</p>
+                    <h1 class="text-3xl font-black text-orange-300 uppercase">Khánh Huyền</h1>
+                </div>
+            </div>
+            <div class="flex-1 p-8 flex flex-col items-center text-center">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Trân trọng kính mời</p>
+                <h2 id="guest-name" class="text-3xl font-black text-gray-800 italic mb-4">Bạn thân mến</h2>
+                <p class="text-xs text-gray-500 leading-relaxed italic mb-8">Mong bạn cùng đến chung vui trong ngày đặc biệt này của mình nhé!</p>
+                
+                <button onclick="openInvitation()" class="mt-auto w-full bg-gray-900 text-white p-2 rounded-3xl flex items-center justify-between shadow-xl active:scale-95 transition-transform">
+                    <div class="bg-white text-gray-900 p-3 rounded-2xl"><i data-lucide="arrow-right"></i></div>
+                    <span class="flex-1 font-bold uppercase text-[10px] tracking-widest">Mở thiệp xem ngay</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MẶT SAU (CHI TIẾT) -->
+        <div id="back-side" class="absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white z-10">
+            <div class="bg-gradient-to-br from-orange-500 to-orange-700 p-8 pt-12 pb-16 text-center text-white relative shrink-0">
+                <h3 class="text-2xl font-black uppercase tracking-widest">Khánh Huyền</h3>
+                <p class="text-[10px] uppercase tracking-widest opacity-60">Graduation 2026</p>
+                
+                <div class="absolute -bottom-10 left-6 right-6 bg-white rounded-3xl p-4 shadow-xl flex items-center justify-around text-gray-800 border border-orange-50">
+                    <div class="text-center w-1/2 border-r">
+                        <p class="text-[10px] font-bold text-orange-500 uppercase">Ngày</p>
+                        <p class="font-bold">17.01.2026</p>
+                    </div>
+                    <div class="text-center w-1/2">
+                        <p class="text-[10px] font-bold text-orange-500 uppercase">Giờ</p>
+                        <p class="font-bold">10:30 AM</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 pt-14 px-6 pb-6 overflow-y-auto flex flex-col">
+                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl mb-4 border border-gray-100">
+                    <div class="p-3 bg-orange-100 text-orange-600 rounded-xl"><i data-lucide="map-pin"></i></div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase text-gray-800">Khu E - HUTECH</p>
+                        <p class="text-[10px] text-gray-400">TP. Hồ Chí Minh</p>
+                    </div>
+                </div>
+
+                <div onclick="toggleMap(true)" class="relative h-32 w-full rounded-2xl overflow-hidden mb-6 border-2 border-orange-50 cursor-pointer group">
+                    <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png" class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 bg-black/10 flex items-center justify-center text-[10px] text-white font-bold uppercase tracking-widest">Phóng to bản đồ</div>
+                </div>
+
+                <div class="mt-auto space-y-3">
+                    <a href="https://zalo.me/0814241333" target="_blank" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
+                        <i data-lucide="message-circle"></i> Xác Nhận Tham Gia
+                    </a>
+                    <a href="tel:0332409003" class="w-full p-2 bg-white border border-gray-100 rounded-2xl flex items-center gap-3 shadow-sm active:bg-gray-50">
+                        <div class="bg-emerald-100 text-emerald-600 p-3 rounded-xl"><i data-lucide="phone"></i></div>
+                        <div class="text-left">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase leading-none mb-1">Cần hỗ trợ? Gọi Hiệp</p>
+                            <p class="text-sm font-bold text-gray-800 tracking-tight">0332 409 003</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Khởi tạo Lucide Icons
+        lucide.createIcons();
+
+        const music = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+        const cardWrapper = document.getElementById('card-wrapper');
+        const iconPlaying = document.getElementById('icon-playing');
+        const iconMuted = document.getElementById('icon-muted');
+
+        // Lấy tên khách từ URL (?name=Ten_Khach)
+        const params = new URLSearchParams(window.location.search);
+        const nameParam = params.get('name');
+        if (nameParam) {
+            document.getElementById('guest-name').innerText = nameParam.replace(/_/g, ' ');
+        }
+
+        // Tạo icon trang trí nền
+        const decorContainer = document.getElementById('decorations');
+        const icons = ['heart', 'sparkles', 'graduation-cap', 'paw-print'];
+        for (let i = 0; i < 10; i++) {
+            const div = document.createElement('div');
+            div.className = 'floating-icon';
+            div.style.left = Math.random() * 100 + 'vw';
+            div.style.top = Math.random() * 100 + 'vh';
+            div.style.animationDelay = Math.random() * 5 + 's';
+            div.innerHTML = `<i data-lucide="${icons[i % icons.length]}" style="width: ${24 + Math.random() * 20}px"></i>`;
+            decorContainer.appendChild(div);
+        }
+        lucide.createIcons({ attrs: { class: ['floating-icon'] } });
+
+        // Hàm mở thiệp
+        function openInvitation() {
+            cardWrapper.classList.add('is-open');
+            musicBtn.classList.remove('hidden');
+            
+            // Chơi nhạc (trình duyệt yêu cầu user tương tác mới cho play)
+            music.play().catch(e => console.log("Yêu cầu tương tác để phát nhạc"));
+        }
+
+        // Điều khiển nhạc
+        musicBtn.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+                iconPlaying.classList.remove('hidden');
+                iconMuted.classList.add('hidden');
+            } else {
+                music.pause();
+                iconPlaying.classList.add('hidden');
+                iconMuted.classList.remove('hidden');
+            }
+        });
+
+        // Đóng/mở bản đồ
+        function toggleMap(show) {
+            const modal = document.getElementById('map-modal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
