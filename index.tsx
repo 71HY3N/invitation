@@ -12,7 +12,7 @@ const MY_NAME = "Khánh Huyền";
 const ZALO_PHONE = "0814241333";
 const HELP_PHONE = "0332409003";
 const DATE = "17.01.2026";
-const TIME = "09:30 AM";
+const TIME = "10:30 AM";
 const LOCATION_NAME = "Khu E - HUTECH";
 const LOCATION_SUB = "Thành phố Hồ Chí Minh";
 
