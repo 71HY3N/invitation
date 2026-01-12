@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { AppMode } from './types';
-import InvitationCard from './components/InvitationCard';
-import AdminPanel from './components/AdminPanel';
+import { AppMode } from './types.ts';
+import InvitationCard from './components/InvitationCard.tsx';
+import AdminPanel from './components/AdminPanel.tsx';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<AppMode>('guest');

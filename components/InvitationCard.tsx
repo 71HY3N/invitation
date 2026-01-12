@@ -4,8 +4,8 @@ import {
   MapPin, Calendar, Clock, Phone, Volume2, VolumeX, Music, 
   ArrowLeft, PawPrint, ExternalLink, ZoomIn, X, MessageCircle, UserPlus, Info, Navigation
 } from 'lucide-react';
-import { InvitationProps } from '../types';
-import DecorativeBackground from './DecorativeBackground';
+import { InvitationProps } from '../types.ts';
+import DecorativeBackground from './DecorativeBackground.tsx';
 
 const CONFIRM_ZALO_PHONE = "0814241333";
 const SUPPORT_PHONE = "0332409003";
