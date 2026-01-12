@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Babel Standalone: Cho phép chạy trực tiếp code React/TypeScript (.tsx) trên trình duyệt mà không cần build -->
+    <!-- Nạp Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="importmap">
@@ -35,18 +35,20 @@
         .perspective-1000 {
             perspective: 1000px;
         }
-        /* Hiệu ứng loading trong lúc đợi trình duyệt biên dịch code */
+        /* Hiệu ứng loading */
         #root:empty::before {
-            content: "Đang khởi tạo thiệp mời...";
+            content: "Đang nạp thiệp mời...";
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-weight: 700;
+            font-weight: 800;
             color: #f97316;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-size: 14px;
+            letter-spacing: 0.2em;
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
         }
     </style>
 </head>
@@ -54,17 +56,26 @@
     <div id="root"></div>
 
     <!-- 
-      Sử dụng type="text/babel" để Babel tự động biên dịch file .tsx.
-      data-type="module" cho phép chúng ta sử dụng lệnh import/export chuẩn ESM.
+      Sử dụng src trực tiếp với type="text/babel" 
+      Babel Standalone sẽ tự fetch file này qua XHR (bỏ qua lỗi MIME type text/plain)
+      data-presets="typescript,react" là bắt buộc để dịch code của bạn.
     -->
-    <script type="text/babel" data-type="module">
-        import './index.tsx';
+    <script 
+        type="text/babel" 
+        data-presets="typescript,react" 
+        data-type="module" 
+        src="./index.tsx">
     </script>
 
-    <!-- Đoạn script bắt lỗi để debug nếu có vấn đề phát sinh -->
     <script>
+        // Hiển thị lỗi ra màn hình nếu có để dễ debug
         window.onerror = function(message, source, lineno, colno, error) {
-            console.error("Lỗi ứng dụng:", message, "tại", source);
+            const root = document.getElementById('root');
+            if (root && root.innerHTML === "") {
+                root.innerHTML = `<div style="padding: 20px; color: red; font-size: 12px; font-family: monospace;">
+                    Lỗi khởi tạo: ${message}<br>Tại: ${source}:${lineno}
+                </div>`;
+            }
         };
     </script>
 </body>
