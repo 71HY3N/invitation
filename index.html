@@ -58,6 +58,30 @@
             100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
+        /* Hiệu ứng chấm Live nhấp nháy */
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: relative;
+        }
+        .live-dot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
         /* Trang trí nổi hạt gạo/tim nhẹ */
         .floating-icon {
             position: absolute;
@@ -94,14 +118,6 @@
         <i data-lucide="volume-2" id="icon-playing"></i>
         <i data-lucide="volume-x" id="icon-muted" class="hidden"></i>
     </button>
-
-    <!-- Modal Bản Đồ -->
-    <div id="map-modal" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-6 hidden" onclick="toggleMap(false)">
-        <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png" class="max-w-full max-h-[70vh] rounded-2xl shadow-2xl border-2 border-white/20">
-        <button class="mt-8 px-6 py-3 bg-white/10 text-white rounded-full flex items-center gap-2 font-bold">
-            <i data-lucide="x"></i> Đóng bản đồ
-        </button>
-    </div>
 
     <!-- Công cụ Admin (Tạo Link) -->
     <div id="admin-panel" class="fixed inset-0 z-[110] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 hidden">
@@ -151,7 +167,7 @@
         <!-- MẶT SAU (CHI TIẾT) -->
         <div id="back-side" class="absolute inset-0 bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-white z-10">
             
-            <!-- Nút quay lại - Làm rõ ràng hơn -->
+            <!-- Nút quay lại -->
             <button onclick="closeInvitation()" class="absolute top-6 left-6 z-30 p-3 bg-orange-500/80 text-white rounded-2xl active:scale-90 transition-all shadow-lg border border-orange-400 backdrop-blur-md">
                 <i data-lucide="arrow-left" size="20"></i>
             </button>
@@ -173,18 +189,33 @@
             </div>
 
             <div class="flex-1 pt-14 px-6 pb-6 overflow-y-auto flex flex-col">
-                <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl mb-4 border border-gray-100">
+                <!-- Địa điểm liên kết Maps chính -->
+                <a href="https://maps.app.goo.gl/DdZf7K6RqzTt5i3y7?g_st=com.google.maps.preview.copy" target="_blank" class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl mb-3 border border-gray-100 active:bg-orange-50 transition-colors">
                     <div class="p-3 bg-orange-100 text-orange-600 rounded-xl"><i data-lucide="map-pin"></i></div>
                     <div class="text-left">
-                        <p class="text-[10px] font-bold uppercase text-gray-800">Khu E - HUTECH</p>
-                        <p class="text-[10px] text-gray-400">TP. Hồ Chí Minh</p>
+                        <p class="text-[10px] font-bold uppercase text-gray-800 leading-none mb-1">Khu E - HUTECH</p>
+                        <p class="text-[10px] text-gray-400">Xem địa điểm tổ chức</p>
                     </div>
-                </div>
+                    <i data-lucide="chevron-right" class="ml-auto text-gray-300" size="16"></i>
+                </a>
 
-                <div onclick="toggleMap(true)" class="relative h-32 w-full rounded-2xl overflow-hidden mb-6 border-2 border-orange-50 cursor-pointer group shrink-0">
-                    <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png" class="w-full h-full object-cover opacity-80">
-                    <div class="absolute inset-0 bg-black/10 flex items-center justify-center text-[10px] text-white font-bold uppercase tracking-widest">Phóng to bản đồ</div>
-                </div>
+                <!-- Phần "Huyền đang ở đây" (Live Location) -->
+                <a href="https://maps.app.goo.gl/gmrtHRgPgRTGHNLz5" target="_blank" class="flex items-center gap-3 p-4 bg-emerald-50 rounded-2xl mb-4 border border-emerald-100 active:bg-emerald-100 transition-colors">
+                    <div class="p-3 bg-white text-emerald-600 rounded-xl shadow-sm flex items-center justify-center">
+                        <div class="live-dot"></div>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase text-emerald-800 leading-none mb-1">Huyền đang ở đây</p>
+                        <p class="text-[10px] text-emerald-600 font-medium">Xem vị trí hiện tại của mình</p>
+                    </div>
+                    <i data-lucide="external-link" class="ml-auto text-emerald-300" size="14"></i>
+                </a>
+
+                <!-- Preview bản đồ -->
+                <a href="https://maps.app.goo.gl/DdZf7K6RqzTt5i3y7?g_st=com.google.maps.preview.copy" target="_blank" class="relative h-28 w-full rounded-2xl overflow-hidden mb-6 border-2 border-orange-50 cursor-pointer group shrink-0 block">
+                    <img src="https://trello.com/1/cards/69631f06bd92aaa12c401a5d/attachments/69631fee7389b9ad77c6eb9a/download/image.png" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/10 flex items-center justify-center text-[10px] text-white font-bold uppercase tracking-widest">Bấm để chỉ đường</div>
+                </a>
 
                 <div class="mt-auto space-y-3">
                     <a href="https://zalo.me/0814241333" target="_blank" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
@@ -202,13 +233,12 @@
         </div>
     </div>
 
-    <!-- Nút mở Admin Panel ẩn (Icon hình khóa bí mật ở góc trái) -->
+    <!-- Nút mở Admin Panel ẩn -->
     <button onclick="toggleAdmin(true)" class="fixed bottom-6 left-6 z-50 p-4 text-gray-400 opacity-5 hover:opacity-40 transition-opacity active:scale-95">
         <i data-lucide="lock" size="14"></i>
     </button>
 
     <script>
-        // Khởi tạo Lucide Icons
         lucide.createIcons();
 
         const music = document.getElementById('bg-music');
@@ -218,68 +248,53 @@
         const iconMuted = document.getElementById('icon-muted');
         const fallingContainer = document.getElementById('falling-container');
 
-        // Lấy tên khách từ URL (?name=Ten_Khach)
         const params = new URLSearchParams(window.location.search);
         const nameParam = params.get('name');
         if (nameParam) {
             document.getElementById('guest-name').innerText = nameParam.replace(/_/g, ' ');
         }
 
-        // Tạo hiệu ứng bàn chân mèo rơi (Sử dụng SVG trực tiếp để hiệu năng tốt hơn)
         const pawSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M11 15.5c.5 0 1 .5 1 1.5s-.5 2-1 2-1-.5-1-1.5.5-1.5 1-1.5z"/><path d="M13 15.5c.5 0 1 .5 1 1.5s-.5 2-1 2-1-.5-1-1.5.5-1.5 1-1.5z"/><path d="M12 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M17 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M7 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/><path d="M12 21c-3.3 0-6-2.7-6-6 0-1.7.7-3.2 1.8-4.2C8.9 9.9 10.4 9 12 9s3.1.9 4.2 1.8c1.1 1 1.8 2.5 1.8 4.2 0 3.3-2.7 6-6 6z"/></svg>`;
 
         function createFallingPaw() {
             const paw = document.createElement('div');
             paw.className = 'falling-paw';
-            
-            // Random vị trí và kích thước
             const size = 20 + Math.random() * 25;
             paw.style.left = Math.random() * 100 + 'vw';
             paw.style.width = size + 'px';
             paw.style.height = size + 'px';
-            
-            // Random thời gian rơi
             const duration = 6 + Math.random() * 6;
             paw.style.animationDuration = duration + 's';
-            
             paw.innerHTML = pawSVG;
             fallingContainer.appendChild(paw);
-            
-            // Tự xóa sau khi rơi xong
-            setTimeout(() => {
-                paw.remove();
-            }, duration * 1000);
+            setTimeout(() => paw.remove(), duration * 1000);
         }
 
-        // Bắt đầu rơi bàn tay mèo
         setInterval(createFallingPaw, 1800);
 
-        // Tạo icon trang trí nền tĩnh/bay nhẹ
         const decorContainer = document.getElementById('decorations');
-        const icons = ['heart', 'sparkles', 'graduation-cap'];
+        const iconList = ['heart', 'sparkles', 'graduation-cap'];
         for (let i = 0; i < 12; i++) {
             const div = document.createElement('div');
             div.className = 'floating-icon';
             div.style.left = Math.random() * 100 + 'vw';
             div.style.top = Math.random() * 100 + 'vh';
             div.style.animationDelay = Math.random() * 5 + 's';
-            div.innerHTML = `<i data-lucide="${icons[i % icons.length]}" style="width: ${18 + Math.random() * 20}px"></i>`;
+            div.innerHTML = `<i data-lucide="${iconList[i % iconList.length]}" style="width: ${18 + Math.random() * 20}px"></i>`;
             decorContainer.appendChild(div);
         }
         lucide.createIcons();
 
-        // Hàm mở/đóng thiệp
         function openInvitation() {
             cardWrapper.classList.add('is-open');
             musicBtn.classList.remove('hidden');
-            music.play().catch(e => console.log("Yêu cầu tương tác để phát nhạc"));
+            music.play().catch(e => console.log("Music auto-play blocked"));
         }
 
         function closeInvitation() {
             cardWrapper.classList.remove('is-open');
         }
 
-        // Điều khiển nhạc
         musicBtn.addEventListener('click', () => {
             if (music.paused) {
                 music.play();
@@ -292,14 +307,6 @@
             }
         });
 
-        // Đóng/mở bản đồ
-        function toggleMap(show) {
-            const modal = document.getElementById('map-modal');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
-        }
-
-        // Logic Admin: Tạo link mời
         function toggleAdmin(show) {
             document.getElementById('admin-panel').classList.toggle('hidden', !show);
         }
@@ -307,19 +314,14 @@
         function generateInviteLink() {
             const guestName = document.getElementById('admin-guest-input').value.trim();
             if (!guestName) return alert("Vui lòng nhập tên khách!");
-
             const formattedName = guestName.replace(/\s+/g, '_');
             const baseUrl = window.location.origin + window.location.pathname;
             const fullLink = `${baseUrl}?name=${formattedName}`;
-
-            // Sao chép vào bộ nhớ tạm
             navigator.clipboard.writeText(fullLink).then(() => {
                 const status = document.getElementById('copy-status');
                 status.style.opacity = '1';
                 setTimeout(() => { status.style.opacity = '0'; }, 2000);
-            }).catch(err => {
-                prompt("Hãy copy link này gửi khách nhé:", fullLink);
-            });
+            }).catch(() => prompt("Link mời của bạn:", fullLink));
         }
     </script>
 </body>
