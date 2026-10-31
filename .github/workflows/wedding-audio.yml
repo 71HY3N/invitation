@@ -1,51 +1,58 @@
-name: Install wedding background music
+name: Build wedding soundtrack from repository
 on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/wedding-audio.yml"
+      - '.github/workflows/wedding-audio.yml'
 permissions:
   contents: write
 concurrency:
-  group: wedding-music-install
+  group: wedding-audio-build
   cancel-in-progress: false
 jobs:
-  install-music:
+  build-soundtrack:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out site
+      - name: Check out repo
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-      - name: Download uploaded audio from shared Drive
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check -q gdown
-          mkdir -p vantrung-thanhhuong/assets
-          python -m gdown --id "1BA_IUNBXpi9psQxXbNSiOrKTeN6XHhZX" -O vantrung-thanhhuong/assets/background-music.m4a
-      - name: Validate audio file
+      - name: Assemble and validate provided M4A
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path("vantrung-thanhhuong/assets/background-music.m4a")
-          b=p.read_bytes()
-          if len(b)<1_000_000 or b"ftyp" not in b[:32]:
-              raise SystemExit("Invalid audio download: Drive may require authorization")
-          print("Valid M4A:",len(b),"bytes")
+          import base64
+          root=Path('vantrung-thanhhuong')
+          source=root/'audio-build'
+          chunks=[]
+          for i in range(21):
+              if i==11:
+                  names=['part-11a.txt','part-11b.txt']
+              else:
+                  names=[f'part-{i:02d}.txt']
+              for name in names:
+                  p=source/name
+                  if not p.is_file(): raise SystemExit(f'Missing chunk: {name}')
+                  chunks.append(p.read_text(encoding='utf-8').strip())
+          audio=base64.b64decode(''.join(chunks),validate=True)
+          if len(audio)!=7588221 or b'ftyp' not in audio[:32]:
+              raise SystemExit(f'Invalid soundtrack bytes: {len(audio)}')
+          dest=root/'assets'/'background-music.m4a'
+          dest.parent.mkdir(parents=True,exist_ok=True)
+          dest.write_bytes(audio)
+          print(f'Audio assembled OK: {len(audio)} bytes')
           PY
           ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 vantrung-thanhhuong/assets/background-music.m4a
-      - name: Publish audio file
+      - name: Commit completed audio asset
         shell: bash
         run: |
-          set -e
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -f vantrung-thanhhuong/assets/background-music.m4a
           if ! git diff --cached --quiet; then
-            git commit -m "Publish verified wedding soundtrack file"
+            git commit -m 'Publish playable wedding soundtrack'
             git push
           else
-            echo "Audio asset already exists"
+            echo 'Audio already present'
           fi
