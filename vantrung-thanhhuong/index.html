@@ -383,43 +383,34 @@ body.album-open{overflow:hidden!important}
 </div><script>
 // Removed obsolete flower IDs; decorative SVG is optional.
 const weddingAudio=document.getElementById('weddingAudio');const soundtrackToggle=document.getElementById('soundtrackToggle');const soundtrackLabel=document.getElementById('soundtrackLabel');
-// GitHub Pages may not contain the optional m4a. Keep music available with an
-// original, gently synthesized instrumental fallback instead of a broken button.
-let musicPlaying=false, musicFallback=false, musicContext=null, musicTimer=null, musicStep=0;
-const musicNotes=[261.63,329.63,392,523.25,440,392,329.63,293.66,261.63,329.63,440,392,349.23,329.63,293.66,261.63];
-function softWeddingNote(freq,at,duration){
- const osc=musicContext.createOscillator(),gain=musicContext.createGain();
- osc.type='sine';osc.frequency.value=freq;
- gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.065,at+.08);
- gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
- osc.connect(gain);gain.connect(musicContext.destination);osc.start(at);osc.stop(at+duration+.02);
-}
-function stopFallback(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}if(musicContext&&musicContext.state==='running')musicContext.suspend().catch(()=>{});}
-async function startFallback(){
- const AudioCtx=window.AudioContext||window.webkitAudioContext;
- if(!AudioCtx)throw new Error('Web Audio is unsupported');
- if(!musicContext)musicContext=new AudioCtx();
- await musicContext.resume();musicFallback=true;
- if(musicTimer)clearInterval(musicTimer);
- const playBeat=()=>{if(!musicPlaying)return;const now=musicContext.currentTime+.025;softWeddingNote(musicNotes[musicStep%musicNotes.length],now,.63);if(musicStep%4===0)softWeddingNote([130.81,174.61,146.83,196][Math.floor(musicStep/4)%4],now,1.65);musicStep++;};
- playBeat();musicTimer=setInterval(playBeat,720);
-}
+// Play the selected original soundtrack only; never substitute synthesized music.
+const soundtrackUrl='./assets/background-music.m4a';
+weddingAudio.src=soundtrackUrl;
+weddingAudio.loop=true;
+weddingAudio.preload='auto';
+let soundtrackEnabled=false;
 async function setSoundtrack(play){
  soundtrackToggle.hidden=false;
- if(!play){musicPlaying=false;weddingAudio.pause();stopFallback();soundtrackLabel.textContent='Bật nhạc';soundtrackToggle.setAttribute('aria-label','Bật nhạc nền');return;}
- musicPlaying=true;soundtrackLabel.textContent='Đang mở nhạc…';
- try{
-  if(!musicFallback){
-   if(!weddingAudio.getAttribute('src'))throw new Error('No audio source');
-   await weddingAudio.play();
-  }else await startFallback();
- }catch(e){
-  try{await startFallback()}catch(err){musicPlaying=false;soundtrackLabel.textContent='Không phát được nhạc';return;}
+ if(!play){
+  soundtrackEnabled=false;weddingAudio.pause();
+  soundtrackLabel.textContent='Bật nhạc';
+  soundtrackToggle.setAttribute('aria-label','Bật nhạc nền');return;
  }
- soundtrackLabel.textContent='Tắt nhạc';soundtrackToggle.setAttribute('aria-label','Tắt nhạc nền');
+ soundtrackEnabled=true;
+ soundtrackLabel.textContent='Đang tải nhạc…';
+ try {
+  await weddingAudio.play();
+  if(soundtrackEnabled){soundtrackLabel.textContent='Tắt nhạc';soundtrackToggle.setAttribute('aria-label','Tắt nhạc nền');}
+ } catch(e) {
+  soundtrackEnabled=false;
+  soundtrackLabel.textContent='Bật nhạc';
+  soundtrackToggle.setAttribute('aria-label','Thử phát nhạc nền');
+  console.warn('Soundtrack file is missing or playback is blocked:',e);
+ }
 }
-weddingAudio.addEventListener('error',()=>{if(musicPlaying&&!musicFallback)setSoundtrack(true);});
-soundtrackToggle.addEventListener('click',()=>setSoundtrack(!musicPlaying));
+weddingAudio.addEventListener('error',()=>{if(soundtrackEnabled){soundtrackEnabled=false;soundtrackLabel.textContent='Chưa tải được nhạc';}});
+weddingAudio.addEventListener('pause',()=>{if(!soundtrackEnabled)soundtrackLabel.textContent='Bật nhạc';});
+soundtrackToggle.addEventListener('click',()=>setSoundtrack(!soundtrackEnabled));
 document.getElementById('openBtn')?.addEventListener('click',function(){document.body.classList.add('opened');this.setAttribute('aria-expanded','true');window.scrollTo(0,0);setSoundtrack(true);});
 document.getElementById('goRsvp').onclick=()=>document.getElementById('rsvpSection').scrollIntoView({behavior:'smooth'});
 const cg=document.getElementById('calendarGrid');['T2','T3','T4','T5','T6','T7','CN'].forEach(d=>{let e=document.createElement('span');e.textContent=d;e.className='week';cg.appendChild(e)});for(let i=0;i<1;i++){cg.appendChild(document.createElement('span'))}for(let d=1;d<=31;d++){let e=document.createElement('span');e.textContent=d;if(d===20)e.className='special';cg.appendChild(e)}
