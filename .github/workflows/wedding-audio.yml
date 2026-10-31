@@ -1,4 +1,4 @@
-name: Add wedding audio asset
+name: Install wedding background music
 on:
   workflow_dispatch:
   push:
@@ -6,29 +6,46 @@ on:
       - ".github/workflows/wedding-audio.yml"
 permissions:
   contents: write
+concurrency:
+  group: wedding-music-install
+  cancel-in-progress: false
 jobs:
-  fetch-audio:
+  install-music:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out site
+        uses: actions/checkout@v4
         with:
-          python-version: "3.11"
-      - name: Fetch publicly shared audio
+          persist-credentials: true
+      - name: Download uploaded audio from shared Drive
+        shell: bash
         run: |
-          python -m pip install --quiet gdown
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -q gdown
           mkdir -p vantrung-thanhhuong/assets
-          gdown --id "1BA_IUNBXpi9psQxXbNSiOrKTeN6XHhZX" -O vantrung-thanhhuong/assets/background-music.m4a
+          python -m gdown --id "1BA_IUNBXpi9psQxXbNSiOrKTeN6XHhZX" -O vantrung-thanhhuong/assets/background-music.m4a
+      - name: Validate audio file
+        shell: bash
+        run: |
           python - <<'PY'
           from pathlib import Path
-          data=Path("vantrung-thanhhuong/assets/background-music.m4a").read_bytes()
-          assert len(data)>1000000, "Downloaded response is too small to be audio"
-          assert b"ftyp" in data[:32], "Download did not return an M4A media file"
-          print(f"Audio verified: {len(data)} bytes")
+          p=Path("vantrung-thanhhuong/assets/background-music.m4a")
+          b=p.read_bytes()
+          if len(b)<1_000_000 or b"ftyp" not in b[:32]:
+              raise SystemExit("Invalid audio download: Drive may require authorization")
+          print("Valid M4A:",len(b),"bytes")
           PY
-      - name: Commit audio asset
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 vantrung-thanhhuong/assets/background-music.m4a
+      - name: Publish audio file
+        shell: bash
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add vantrung-thanhhuong/assets/background-music.m4a
-          git diff --cached --quiet || (git commit -m "Add wedding background audio" && git push)
+          git add -f vantrung-thanhhuong/assets/background-music.m4a
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish verified wedding soundtrack file"
+            git push
+          else
+            echo "Audio asset already exists"
+          fi
