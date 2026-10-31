@@ -418,22 +418,29 @@ document.getElementById('rsvp').addEventListener('submit',async function(e){
  e.preventDefault();
  const form=this,button=form.querySelector('[type="submit"]'),status=document.getElementById('status');
  if(!form.reportValidity())return;
- button.disabled=true;button.textContent='ĐANG GỬI...';status.textContent='Đang gửi xác nhận...';
- try{
-  const fields=Object.fromEntries(new FormData(form).entries());
-  const res=await fetch('https://formsubmit.co/ajax/htthhuong0@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(fields)});
-  const data=await res.json();
-  if(!res.ok||data.success===false||data.success==='false')throw new Error(data.message||'Gửi thất bại');
-  status.textContent='Đã tiếp nhận lời chúc. Nếu hộp thư chưa kích hoạt FormSubmit, chủ thiệp cần xác nhận email kích hoạt trước khi nhận thông báo.';
+ const fields=Object.fromEntries(new FormData(form).entries());
+ if(fields._honey)return;
+ const payload=new URLSearchParams();
+ payload.set('name',String(fields.name||'').trim());
+ payload.set('attendance',String(fields.attendance||''));
+ payload.set('wish',String(fields.wish||'').trim());
+ payload.set('submittedAt',new Date().toISOString());
+ payload.set('source','wedding-website');
+ payload.set('email','');
+ payload.set('messageId','web-'+Date.now()+'-'+Math.random().toString(36).slice(2,10));
+ button.disabled=true;button.textContent='ĐANG GỬI...';status.textContent='Đang gửi phản hồi...';
+ try {
+  await fetch('https://hook.eu1.make.com/8babwyttibv4qpbutnr8vo6rrvik0vdk',{
+   method:'POST',mode:'no-cors',body:payload,keepalive:true
+  });
+  status.textContent='Đã chuyển yêu cầu gửi phản hồi. Cảm ơn bạn đã gửi lời chúc!';
+  const fallback=document.getElementById('rsvpMailFallback');if(fallback)fallback.remove();
   form.reset();
- }catch(err){
-  status.textContent='Chưa gửi thành công. Vui lòng thử lại hoặc mở ứng dụng email để gửi.';
-  const subject=encodeURIComponent('Xác nhận tham dự thiệp cưới');
-  const vals=Object.fromEntries(new FormData(form).entries());
-  const body=encodeURIComponent('Tên: '+(vals.name||'')+'\nTham dự: '+(vals.attendance||'')+'\nLời chúc: '+(vals.wish||''));
+ }catch(error){
+  status.textContent='Không thể kết nối hệ thống nhận phản hồi. Vui lòng thử lại hoặc gửi qua email.';
   let fallback=document.getElementById('rsvpMailFallback');
-  if(!fallback){fallback=document.createElement('a');fallback.id='rsvpMailFallback';fallback.textContent='Gửi qua ứng dụng email';fallback.style.display='block';fallback.style.marginTop='10px';status.after(fallback);}
-  fallback.href='mailto:htthhuong0@gmail.com?subject='+subject+'&body='+body;
- }finally{button.disabled=false;button.textContent='GỬI LỜI CHÚC';}
+  if(!fallback){fallback=document.createElement('a');fallback.id='rsvpMailFallback';fallback.textContent='Gửi qua email';fallback.style.display='block';fallback.style.marginTop='10px';status.after(fallback)}
+  fallback.href='mailto:htthhuong0@gmail.com?subject='+encodeURIComponent('Xác nhận tham dự thiệp cưới')+'&body='+encodeURIComponent('Tên: '+(fields.name||'')+'\nTham dự: '+(fields.attendance||'')+'\nLời chúc: '+(fields.wish||''));
+ }finally{button.disabled=false;button.textContent='GỬI LỜI CHÚC'}
 });
 </script></body></html>
